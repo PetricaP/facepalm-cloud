@@ -1,0 +1,10 @@
+.idea
+.vscode
+target
+node_modules
+*.log
+*.txt
+.mvn
+package-lock.json
+build
+*.iml
