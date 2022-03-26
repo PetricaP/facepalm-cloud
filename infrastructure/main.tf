@@ -24,18 +24,18 @@ provider "aws" {
 resource "aws_dynamodb_table" "facepalm_table" {
   name = "facepalm-table"
   billing_mode = "PROVISIONED"
-  read_capacity = 1
-  write_capacity = 1
-  hash_key = "PK"
-  range_key = "SK"
+  read_capacity = 5
+  write_capacity = 5
+  hash_key = "pk"
+  range_key = "sk"
 
   attribute {
-    name = "PK"
+    name = "pk"
     type = "S"
   }
 
   attribute {
-    name = "SK"
+    name = "sk"
     type = "S"
   }
 
