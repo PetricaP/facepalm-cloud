@@ -7,7 +7,85 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.App {
+  padding: 0px;
+}
+
+.user {
+  width: 300px;
+  height: fit-content;
+  margin: 30px;
+  border-radius: 10px;
+  background-color: antiquewhite;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+}
+
+.username {
+  font-size: xx-large;
+  padding-top: 10px;
+  background-color: rgb(253, 167, 136);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  color: antiquewhite;
+}
+
+.content {
+  padding: 10px;
+}
+
+.email {
+  font-style: italic;
+  font-size: small;
+}
+
+.status {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.followers-container {
+  margin: auto;
+  overflow: hidden;
+  width: 20%;
+  border-radius: 10px;
+  background-color: wheat;
+  padding: 5px;
+}
+
+.followers-container>div {
+  width: 30%;
+
+}
+
+.address {
+  font-size: x-small;
+}
+
+.followers {
+  float: left;
+  color: cornflowerblue;
+}
+
+.following {
+  float: right;
+  color: coral;
+}
+
+.interests-container {
+  margin: auto;
+  overflow: hidden;
+}
+
+.interest {
+  border-radius: 10px;
+  width: fit-content;
+  padding: 5px;
+  background-color: beige;
+  border: 1px;
+  border-color: chocolate;
+  border-style: solid;
+  margin: 5px;
+  float: left;
+  font-size: small;
 }
