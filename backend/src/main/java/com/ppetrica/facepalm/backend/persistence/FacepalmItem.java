@@ -8,20 +8,20 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Setter
+@Builder
 @DynamoDBTable(tableName="")
 public class FacepalmItem {
-    @Getter(onMethod = @__({@DynamoDBHashKey}))
+    @DynamoDBHashKey
     private String pk;
 
-    @Getter(onMethod = @__({@DynamoDBRangeKey}))
+    @DynamoDBRangeKey
     private String sk;
 
     @Getter(onMethod = @__({@DynamoDBAttribute}))
@@ -32,6 +32,9 @@ public class FacepalmItem {
     
     @Getter(onMethod = @__({@DynamoDBAttribute}))
     private String username;
+
+    @Getter(onMethod = @__({@DynamoDBAttribute}))
+    private String name;
     
     @Getter(onMethod = @__({@DynamoDBAttribute}))
     private String status;
@@ -47,6 +50,9 @@ public class FacepalmItem {
     
     @Getter(onMethod = @__({@DynamoDBAttribute}))
     private String pinnedImage;
+
+    @Getter(onMethod = @__({@DynamoDBAttribute}))
+    private String birthdate;
 
     @Getter(onMethod = @__({@DynamoDBAttribute}))
     private String followingUser;

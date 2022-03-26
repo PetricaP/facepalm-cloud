@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.constraints.Min;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
@@ -12,6 +13,7 @@ import lombok.ToString;
 
 @Builder
 @Getter
+@EqualsAndHashCode
 @ToString
 public class User {
     @NonNull
@@ -34,4 +36,13 @@ public class User {
     
     @Min(value = 0L, message = "The value must be positive")
     private final int following;
+
+    @NonNull
+    private final String birthdate;
+
+    @NonNull
+    private final String name;
+
+    @NonNull
+    private final String pinnedImage;
 }
