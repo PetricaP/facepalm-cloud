@@ -89,3 +89,17 @@ body {
   float: left;
   font-size: small;
 }
+
+.profile-area {
+  margin: auto;
+  overflow: hidden;
+  width: 20%;
+  border-radius: 10px;
+  background-color: wheat;
+  padding: 5px;
+}
+
+.photo-area {
+  width: 100%;
+  height: auto;
+}

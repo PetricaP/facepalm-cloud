@@ -12,7 +12,7 @@ import lombok.NonNull;
 public class UserMapper {
     @Valid
     public User facepalmItemToUser(@NonNull FacepalmItem item) {
-        User user = User.builder()
+        return User.builder()
             .username(item.getUsername())
             .name(item.getName())
             .address(item.getAddress())
@@ -24,7 +24,5 @@ public class UserMapper {
             .following(item.getFollowing())
             .pinnedImage(item.getPinnedImage())
             .build();
-
-        return user;
     }
 }

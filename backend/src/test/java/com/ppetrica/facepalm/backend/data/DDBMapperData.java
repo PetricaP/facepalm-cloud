@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import com.google.common.collect.ImmutableMap;
 import com.ppetrica.facepalm.backend.persistence.FacepalmItem;
 
 import lombok.experimental.UtilityClass;
@@ -15,22 +16,27 @@ import lombok.experimental.UtilityClass;
 public class DDBMapperData {
     public final String EXPECTED_PK = "USER#" + USERNAME;
     public final String EXPECTED_SK = "#METADATA#" + USERNAME;
+    public final String EXPECTED_PHOTO_SK = "PHOTO"
+        + "#" + com.ppetrica.facepalm.backend.data.ImageData.USERNAME 
+        + "#" + com.ppetrica.facepalm.backend.data.ImageData.TIMESTAMP;
 
     public FacepalmItem buildValidUserItem() {
-        return FacepalmItem.builder()
-            .username(USERNAME)
-            .pk(EXPECTED_PK)
-            .sk(EXPECTED_SK)
-            .address(ADDRESS)
-            .email(EMAIL)
-            .followers(FOLLOWERS)
-            .following(FOLLOWING)
-            .interests(INTERESTS)
-            .birthdate(BIRTHDAY)
-            .name(NAME)
-            .status(STATUS)
-            .pinnedImage(PINNED_IMAGE)
-            .build();
+        FacepalmItem item = new FacepalmItem();
+        
+        item.setUsername(USERNAME);
+        item.setPk(EXPECTED_PK);
+        item.setSk(EXPECTED_SK);
+        item.setAddress(ADDRESS);
+        item.setEmail(EMAIL);
+        item.setFollowers(FOLLOWERS);
+        item.setFollowing(FOLLOWING);
+        item.setInterests(INTERESTS);
+        item.setBirthdate(BIRTHDAY);
+        item.setName(NAME);
+        item.setStatus(STATUS);
+        item.setPinnedImage(PINNED_IMAGE);
+
+        return item;
     }
 
     public Stream<FacepalmItem> provideInvalidUserItemsWithNullFields() {
@@ -66,5 +72,23 @@ public class DDBMapperData {
             
             return item;
         });
+    }
+
+    public FacepalmItem builValidImageItem() {
+        FacepalmItem item = new FacepalmItem();
+        
+        item.setUsername(USERNAME);
+        item.setPk(EXPECTED_PK);
+        item.setSk(EXPECTED_PHOTO_SK);
+        item.setTimestamp(com.ppetrica.facepalm.backend.data.ImageData.TIMESTAMP);
+        item.setLocation(com.ppetrica.facepalm.backend.data.ImageData.LOCATION);
+        item.setReactions(ImmutableMap.of(
+            "+1", com.ppetrica.facepalm.backend.data.ImageData.REACTIONS.getLikes(),
+            "smiley", com.ppetrica.facepalm.backend.data.ImageData.REACTIONS.getSmileys(),
+            "sunglasses", com.ppetrica.facepalm.backend.data.ImageData.REACTIONS.getSunglasses(),
+            "heart", com.ppetrica.facepalm.backend.data.ImageData.REACTIONS.getHearts()
+        ));
+
+        return item;
     }
 }

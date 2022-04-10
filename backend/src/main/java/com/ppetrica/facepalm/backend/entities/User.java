@@ -4,11 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.Min;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 
 
 @Builder
@@ -43,6 +39,7 @@ public class User {
     @NonNull
     private final String name;
 
+    @Setter
     @NonNull
-    private final String pinnedImage;
+    private String pinnedImage;
 }

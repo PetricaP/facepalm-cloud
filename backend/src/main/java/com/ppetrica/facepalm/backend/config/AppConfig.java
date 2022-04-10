@@ -5,6 +5,9 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.TableNameOverride;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.ppetrica.facepalm.backend.persistence.ImageMapper;
 import com.ppetrica.facepalm.backend.persistence.UserMapper;
 
 import org.mapstruct.factory.Mappers;
@@ -28,6 +31,11 @@ public class AppConfig {
     }
 
     @Bean
+    public AmazonS3 getS3Client() {
+        return AmazonS3ClientBuilder.defaultClient();
+    }
+
+    @Bean
     public DynamoDBMapper getDynamoDBMapper(@NonNull AmazonDynamoDB ddbClient) {
         DynamoDBMapperConfig config = new DynamoDBMapperConfig.Builder()
             .withTableNameOverride(
@@ -41,5 +49,10 @@ public class AppConfig {
     @Bean
     public UserMapper getUserMapper() {
         return Mappers.getMapper(UserMapper.class);
+    }
+
+    @Bean
+    public ImageMapper getImageMapper() {
+        return Mappers.getMapper(ImageMapper.class);
     }
 }

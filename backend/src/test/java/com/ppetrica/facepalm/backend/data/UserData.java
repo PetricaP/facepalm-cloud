@@ -9,8 +9,8 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class UserData {
-    public final String USERNAME = "bob";
-    public final String NAME = "Bob Dilan";
+    public final String USERNAME = "haroldwatkins";
+    public final String NAME = "Harold Watkins";
     public final String ADDRESS = "Manhattan";
     public final String EMAIL = "bob@gmail.com";
     public final String BIRTHDAY = "1916-09-06";

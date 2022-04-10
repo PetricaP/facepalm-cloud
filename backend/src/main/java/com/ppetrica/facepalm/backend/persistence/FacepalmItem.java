@@ -9,19 +9,19 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Setter
-@Builder
+@NoArgsConstructor
 @DynamoDBTable(tableName="")
 public class FacepalmItem {
-    @DynamoDBHashKey
+    @Getter(onMethod = @__({@DynamoDBHashKey}))
     private String pk;
 
-    @DynamoDBRangeKey
+    @Getter(onMethod = @__({@DynamoDBRangeKey}))
     private String sk;
 
     @Getter(onMethod = @__({@DynamoDBAttribute}))
@@ -67,7 +67,7 @@ public class FacepalmItem {
     private String location;
 
     @Getter(onMethod = @__({@DynamoDBAttribute}))
-    private Map<String, String> reactions;
+    private Map<String, Integer> reactions;
 
     @Getter(onMethod = @__({@DynamoDBAttribute}))
     private String reactingUser;
