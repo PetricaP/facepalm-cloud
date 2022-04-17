@@ -38,9 +38,15 @@ resource "aws_dynamodb_table" "facepalm_table" {
     name = "sk"
     type = "S"
   }
+}
 
-  ttl {
-    attribute_name = "TimeToExist"
-    enabled        = false
-  }
+
+resource "aws_s3_bucket" "facepalm_bucket" {
+  bucket = "ppetrica-facepalm-bucket"
+}
+
+
+resource "aws_s3_bucket_acl" "facepalm" {
+  bucket = aws_s3_bucket.facepalm_bucket.id
+  acl    = "private"
 }
