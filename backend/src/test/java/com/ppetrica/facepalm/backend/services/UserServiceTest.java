@@ -2,24 +2,35 @@ package com.ppetrica.facepalm.backend.services;
 
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.ppetrica.facepalm.backend.data.DDBMapperData;
 import com.ppetrica.facepalm.backend.entities.User;
 import com.ppetrica.facepalm.backend.persistence.FacepalmItem;
-import com.ppetrica.facepalm.backend.persistence.ImageMapper;
 import com.ppetrica.facepalm.backend.persistence.UserMapper;
 
-import static com.ppetrica.facepalm.backend.data.UserData.*;
-import static com.ppetrica.facepalm.backend.data.DDBMapperData.*;
+import static com.ppetrica.facepalm.backend.data.DDBMapperData.EXPECTED_SK;
+import static com.ppetrica.facepalm.backend.data.DDBMapperData.EXPECTED_USER_PK;
+import static com.ppetrica.facepalm.backend.data.UserData.EXPECTED_USER;
+import static com.ppetrica.facepalm.backend.data.UserData.EXPIRATION;
+import static com.ppetrica.facepalm.backend.data.UserData.INSTANT;
+import static com.ppetrica.facepalm.backend.data.UserData.USERNAME;
+import static com.ppetrica.facepalm.backend.data.UserData.USER_WITH_PRESIGNED_IMAGE_URL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
+import com.ppetrica.facepalm.backend.util.PresignedImageUrlUserDecorator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.Clock;
+import java.time.Instant;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -31,48 +42,42 @@ public class UserServiceTest {
     private UserMapper userMapper;
 
     @Mock
-    private ImageMapper imageMapper;
-
-    @Mock
-    private AmazonS3Client s3Client;
+    private PresignedImageUrlUserDecorator presignedImageUrlUserDecorator;
 
     private UserService unit;
 
-    private static final FacepalmItem USER_ITEM = buildValidUserItem();
-    private static final FacepalmItem IMAGE_ITEM = builValidImageItem();
+    private static final FacepalmItem USER_ITEM = DDBMapperData.buildValidUserItem();
 
     @BeforeEach
     public void setUp() {
-        unit = new UserService(ddbMapper, s3Client, userMapper, imageMapper);
+        unit = new UserService(ddbMapper, userMapper, presignedImageUrlUserDecorator);
     }
 
     @Test
     public void getUserBasicRequestSucceeds() {
-        Mockito.when(ddbMapper.load(FacepalmItem.class, EXPECTED_PK, EXPECTED_SK)).thenReturn(USER_ITEM);
-        Mockito.when(userMapper.facepalmItemToUser(USER_ITEM)).thenReturn(EXPECTED_USER);
+        // https://stackoverflow.com/questions/55289157/mock-instant-now-without-using-clock-into-constructor-or-without-clock-object
+        Clock spyClock = spy(Clock.class);
+        MockedStatic<Clock> clockMock = mockStatic(Clock.class);
+        clockMock.when(Clock::systemUTC).thenReturn(spyClock);
+        when(spyClock.instant()).thenReturn(Instant.ofEpochSecond(INSTANT));
 
-        Mockito.when(ddbMapper.load(FacepalmItem.class, EXPECTED_PK, EXPECTED_PHOTO_SK)).thenReturn(IMAGE_ITEM);
-        Mockito.when(imageMapper.facepalmItemToImage(IMAGE_ITEM))
-            .thenReturn(com.ppetrica.facepalm.backend.data.ImageData.EXPECTED_IMAGE);
-
-        Mockito.when(s3Client.generatePresignedUrl(any())).thenReturn(
-            com.ppetrica.facepalm.backend.data.ImageData.EXPECTED_PRESIGNED_URL
-        );
+        when(ddbMapper.load(FacepalmItem.class, EXPECTED_USER_PK, EXPECTED_SK)).thenReturn(USER_ITEM);
+        when(userMapper.facepalmItemToUser(USER_ITEM)).thenReturn(EXPECTED_USER);
+        when(presignedImageUrlUserDecorator.changeImageLocationToPresignedUrl(EXPECTED_USER, EXPIRATION))
+            .thenReturn(USER_WITH_PRESIGNED_IMAGE_URL);
 
         User user = unit.getUser(USERNAME);
 
-        assertEquals(EXPECTED_USER, user);
+        assertEquals(USER_WITH_PRESIGNED_IMAGE_URL, user);
 
-        Mockito.verify(ddbMapper).load(FacepalmItem.class, EXPECTED_PK, EXPECTED_SK);
-        Mockito.verify(ddbMapper).load(FacepalmItem.class, EXPECTED_PK, EXPECTED_PHOTO_SK);
-
+        Mockito.verify(ddbMapper).load(FacepalmItem.class, EXPECTED_USER_PK, EXPECTED_SK);
         Mockito.verifyNoMoreInteractions(ddbMapper);
 
         Mockito.verify(userMapper).facepalmItemToUser(USER_ITEM);
         Mockito.verifyNoMoreInteractions(userMapper);
 
-        Mockito.verify(imageMapper).facepalmItemToImage(IMAGE_ITEM);
-        Mockito.verifyNoMoreInteractions(imageMapper);
+        Mockito.verify(presignedImageUrlUserDecorator).changeImageLocationToPresignedUrl(EXPECTED_USER, EXPIRATION);
+        Mockito.verifyNoMoreInteractions(presignedImageUrlUserDecorator);
     }
 
     @Test
@@ -82,21 +87,16 @@ public class UserServiceTest {
 
     @Test
     public void nullDDBMapperThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> new UserService(null, s3Client, userMapper, imageMapper));
-    }
-
-    @Test
-    public void nullS3ClientThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> new UserService(ddbMapper, null, userMapper, imageMapper));
+        assertThrows(IllegalArgumentException.class, () -> new UserService(null, userMapper, presignedImageUrlUserDecorator));
     }
 
     @Test
     public void nullUserMapperThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> new UserService(ddbMapper, s3Client, null, imageMapper));
+        assertThrows(IllegalArgumentException.class, () -> new UserService(ddbMapper, null, presignedImageUrlUserDecorator));
     }
 
     @Test
-    public void nullImageMapperThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> new UserService(ddbMapper, s3Client, userMapper, null));
+    public void nullPresignedImageUrlDecoratorThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> new UserService(ddbMapper, userMapper, null));
     }
 }

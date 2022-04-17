@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.ppetrica.facepalm.backend.persistence.ImageMapper;
 import com.ppetrica.facepalm.backend.persistence.UserMapper;
 
+import com.ppetrica.facepalm.backend.util.S3Helper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

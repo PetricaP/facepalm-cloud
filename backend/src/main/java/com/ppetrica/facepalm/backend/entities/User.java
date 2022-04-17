@@ -7,7 +7,7 @@ import javax.validation.constraints.Min;
 import lombok.*;
 
 
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @EqualsAndHashCode
 @ToString

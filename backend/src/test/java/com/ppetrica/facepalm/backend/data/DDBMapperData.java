@@ -14,17 +14,17 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class DDBMapperData {
-    public final String EXPECTED_PK = "USER#" + USERNAME;
-    public final String EXPECTED_SK = "#METADATA#" + USERNAME;
-    public final String EXPECTED_PHOTO_SK = "PHOTO"
+    public static final String EXPECTED_USER_PK = "USER#" + USERNAME;
+    public static final String EXPECTED_SK = "#METADATA#" + USERNAME;
+    public static final String EXPECTED_PHOTO_SK = "PHOTO"
         + "#" + com.ppetrica.facepalm.backend.data.ImageData.USERNAME 
         + "#" + com.ppetrica.facepalm.backend.data.ImageData.TIMESTAMP;
 
-    public FacepalmItem buildValidUserItem() {
+    public static FacepalmItem buildValidUserItem() {
         FacepalmItem item = new FacepalmItem();
         
         item.setUsername(USERNAME);
-        item.setPk(EXPECTED_PK);
+        item.setPk(EXPECTED_USER_PK);
         item.setSk(EXPECTED_SK);
         item.setAddress(ADDRESS);
         item.setEmail(EMAIL);
@@ -39,7 +39,7 @@ public class DDBMapperData {
         return item;
     }
 
-    public Stream<FacepalmItem> provideInvalidUserItemsWithNullFields() {
+    public static Stream<FacepalmItem> provideInvalidUserItemsWithNullFields() {
         List<Consumer<FacepalmItem>> compromisers = List.of(
             (FacepalmItem item) -> item.setAddress(null),
             (FacepalmItem item) -> item.setEmail(null),
@@ -55,7 +55,7 @@ public class DDBMapperData {
     }
 
 
-    public Stream<FacepalmItem> provideInvalidUserItemsWithInvalidFollowers() {
+    public static Stream<FacepalmItem> provideInvalidUserItemsWithInvalidFollowers() {
         List<Consumer<FacepalmItem>> compromisers = List.of(
             (FacepalmItem item) -> item.setFollowers(-1),
             (FacepalmItem item) -> item.setFollowing(-5)
@@ -64,7 +64,7 @@ public class DDBMapperData {
         return generateInvalidItemsFromCompromisers(compromisers);
     }
 
-    private Stream<FacepalmItem> generateInvalidItemsFromCompromisers(List<Consumer<FacepalmItem>> compromisers) {
+    private static Stream<FacepalmItem> generateInvalidItemsFromCompromisers(List<Consumer<FacepalmItem>> compromisers) {
         return compromisers.stream().map((compromiser) -> {
             FacepalmItem item = buildValidUserItem();
             
@@ -74,11 +74,11 @@ public class DDBMapperData {
         });
     }
 
-    public FacepalmItem builValidImageItem() {
+    public static FacepalmItem builValidImageItem() {
         FacepalmItem item = new FacepalmItem();
         
         item.setUsername(USERNAME);
-        item.setPk(EXPECTED_PK);
+        item.setPk(EXPECTED_USER_PK);
         item.setSk(EXPECTED_PHOTO_SK);
         item.setTimestamp(com.ppetrica.facepalm.backend.data.ImageData.TIMESTAMP);
         item.setLocation(com.ppetrica.facepalm.backend.data.ImageData.LOCATION);
